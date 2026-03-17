@@ -67,6 +67,7 @@
 \author{Arnav Garg}
 \address{Birla Institute of Technology and Science, Pilani Campus, Delhi, India}
 \email{gargarnav2007@gmail.com}
+\url{https://github.com/gargarnav/gaussian-collatz-dynamics}
 \date{March 17, 2026}
 
 % ---- Abstract -----------------------------------------------
@@ -341,6 +342,13 @@ the orbit exists not in $\Zi$ but deep within
 $\Z[\tfrac{1}{2}][i]$.
 \end{remark}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/variant_e_40cycle.png}
+    \caption{The trajectory of the Variant E period-40 cycle in the complex plane.}
+    \label{fig:40cycle}
+\end{figure}
+
 \subsection{Comparison with standard Collatz cycles}
 
 In the classical Collatz problem over $\Z$, only one cycle
@@ -418,6 +426,13 @@ If the orbit of $z_0 \in \Zi$ under $f_E$ is bounded
 \]
 \end{conjecture}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/denom_growth.png}
+    \caption{Growth of maximum denominators along random Variant E orbits using exact rational arithmetic.}
+    \label{fig:denom_growth}
+\end{figure}
+
 % ============================================================
 \section{Fractal Stability Islands}
 \label{sec:fractal}
@@ -434,6 +449,13 @@ Our computations over the grid $[-200,200]^2$ find that
 $\mathcal{S}$ consists of (at least) $4$ isolated connected
 components, which we call \emph{stability islands}.
 Approximately $4.8\%$ of lattice points lie in $\mathcal{S}$.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/variant_e_julia.png}
+    \caption{The stability islands of Variant E, colored by the unique identifier of the cycle they converge to.}
+    \label{fig:stability_islands}
+\end{figure}
 
 \subsection{Box-counting dimension}
 
@@ -466,6 +488,13 @@ strong and reliable linear fit consistent with self-similar
 The result is stable across three independent grid offsets
 (standard deviation $< 0.05$).
 \end{proposition}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/fractal_fit.png}
+    \caption{Log-log regression for estimating the box-counting dimension of the Variant E stability boundary.}
+    \label{fig:fractal_fit}
+\end{figure}
 
 \begin{remark}
 For context, $D=1$ for a smooth curve and $D=2$ for a planar
@@ -510,6 +539,13 @@ The empirical distribution of $\lambda(z_0)$ over $1000$ orbits
 has mean $\bar\lambda \approx -0.66$ and is \emph{entirely negative}:
 no orbit in the sample produced a non-negative Lyapunov exponent.
 \end{proposition}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/lyapunov_dist.png}
+    \caption{Distribution of finite-time Lyapunov exponents for 1000 random orbits under Variant C ($k=2$).}
+    \label{fig:lyapunov_dist}
+\end{figure}
 
 The entirely negative Lyapunov distribution provides strong
 numerical evidence for the following:
@@ -614,6 +650,8 @@ Fractal dimension estimates used the box-counting method
 implemented from scratch, with five box sizes and results
 cross-validated at three independent grid offsets.
 Visualizations used \texttt{matplotlib} at $300$~DPI.
+
+The complete source code and data are available at: \\ \url{https://github.com/gargarnav/gaussian-collatz-dynamics}.
 
 The grid sizes used were:
 \begin{itemize}
