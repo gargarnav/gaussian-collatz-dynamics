@@ -1,5 +1,7 @@
 # Gaussian Collatz Dynamics
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19078383.svg)](https://doi.org/10.5281/zenodo.19078383)
+
 Computational investigation of Collatz-like dynamical systems on the Gaussian
 integers **Z[i]**, focusing on two contrasting variants:
 
@@ -7,6 +9,24 @@ integers **Z[i]**, focusing on two contrasting variants:
 |---------|-----------|------------|
 | **C** | Balanced / globally stable | Average Lyapunov exponent λ ≈ −0.66; stable for k > √2 |
 | **E** | Chaotic / fractal | Period-40 cycle in Z[i, 1/2]; basin boundary D ≈ 1.70 |
+
+---
+
+## Publication
+
+This code accompanies the research paper:
+
+**Garg, A. (2026).** *Collatz-Type Dynamics on Gaussian Integers: Fractal 
+Stability Islands, Long Cycles, and Dyadic Rational Structure* (Version 1.0). 
+Zenodo. https://doi.org/10.5281/zenodo.19078383
+
+**Abstract:** We introduce and study a family of Collatz-type dynamical 
+systems defined on the Gaussian integers. Our computational investigation 
+reveals three principal findings: (i) a stable periodic orbit of length 40, 
+(ii) orbits live in the ring of dyadic Gaussian rationals Z[1/2][i], and 
+(iii) the stability boundary is fractal with dimension D ≈ 1.70.
+
+**Paper:** [View on Zenodo](https://doi.org/10.5281/zenodo.19078383)
 
 ---
 
