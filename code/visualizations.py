@@ -20,30 +20,33 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 
 from exact_cycle import ComplexFraction, step_E_exact, find_exact_cycle
 from fractal_dimension import run as run_fractal
 from lyapunov import run as run_lyapunov
 from variant_e import step_E, orbit as orbit_E
 
-FIGURES_DIR = Path("../paper/figures")
-DATA_DIR = Path("../data")
+FIGURES_DIR = Path("../paper/figures_new")
+DATA_DIR = Path("../data_new")
 
 
 # ---------------------------------------------------------------------------
 # Figure 1: Variant E stability islands
 # ---------------------------------------------------------------------------
 
-def plot_stability_islands(resolution: int = 400, extent: int = 200):
+def plot_stability_islands(resolution: int = 2000, extent: int = 1000):
     """Plot converged regions of Variant E, coloured by cycle ID."""
     print("Plotting Variant E stability islands ...")
+    # Computational grid: [-1000, 1000]^2 for comprehensive coverage
+    # Note: Full [-1000,1000] grid may require significant computation time
     vals = np.arange(-extent, extent)
     grid = np.zeros((len(vals), len(vals)))
 
     cycle_map: dict = {}
     next_id = 1
 
-    for i, b in enumerate(reversed(vals)):
+    for i, b in enumerate(tqdm(list(reversed(vals)), desc="Computing variants")):
         for j, a in enumerate(vals):
             status, _, cycle = orbit_E(complex(a, b), max_iter=500)
             if status == 'converged' and cycle is not None:
@@ -57,14 +60,14 @@ def plot_stability_islands(resolution: int = 400, extent: int = 200):
 
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.imshow(grid == 0, cmap='gray', extent=[-extent, extent, -extent, extent], alpha=0.3)
-    ax.imshow(masked, cmap='plasma', extent=[-extent, extent, -extent, extent])
+    ax.imshow(masked, cmap='viridis', extent=[-extent, extent, -extent, extent])
     ax.set_title('Variant E — Stability Islands')
-    ax.set_xlabel('Re(z)')
-    ax.set_ylabel('Im(z)')
+    ax.set_xlabel('Re(z)', fontsize=14)
+    ax.set_ylabel('Im(z)', fontsize=14)
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     path = FIGURES_DIR / 'variant_e_julia.png'
-    fig.savefig(path, dpi=200)
+    fig.savefig(path, dpi=300, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved {path}")
 
@@ -101,13 +104,13 @@ def plot_40_cycle():
     ax.plot(xs, ys, 'b-', linewidth=0.8)
     ax.scatter(xs[:-1], ys[:-1], s=20, zorder=5)
     ax.set_title(f'Variant E — Period-{len(cycle)} Cycle')
-    ax.set_xlabel('Re(z)')
-    ax.set_ylabel('Im(z)')
+    ax.set_xlabel('Re(z)', fontsize=14)
+    ax.set_ylabel('Im(z)', fontsize=14)
     ax.grid(True, alpha=0.3)
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     path_fig = FIGURES_DIR / 'variant_e_40cycle.png'
-    fig.savefig(path_fig, dpi=150)
+    fig.savefig(path_fig, dpi=300, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved {path_fig}")
 
@@ -140,12 +143,12 @@ def plot_denominator_growth(n_orbits: int = 10, n_steps: int = 60, seed: int = 4
 
     ax.set_yscale('log')
     ax.set_title('Denominator Growth Along Variant E Orbits')
-    ax.set_xlabel('Step')
-    ax.set_ylabel('Max denominator (log scale)')
+    ax.set_xlabel('Step', fontsize=14)
+    ax.set_ylabel('Max denominator (log scale)', fontsize=14)
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     path = FIGURES_DIR / 'denom_growth.png'
-    fig.savefig(path, dpi=150)
+    fig.savefig(path, dpi=300, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved {path}")
 

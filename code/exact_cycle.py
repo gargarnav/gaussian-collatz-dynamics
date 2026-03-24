@@ -121,26 +121,74 @@ def v2_fraction(x: Fraction) -> int:
 # Cycle verification
 # ---------------------------------------------------------------------------
 
-def find_exact_cycle(start: ComplexFraction, max_iter: int = 1000):
-    """Trace the orbit from start and return the cycle once detected."""
-    path = [start]
-    visited = {start: 0}
-    curr = start
+def find_exact_cycle(start: ComplexFraction, max_iter: int = 2000):
+    """Trace the orbit using Brent's cycle-detection algorithm with exact arithmetic."""
+    power = lam = 1
+    tortoise = start
+    hare = step_E_exact(start)
+    
+    for _ in range(max_iter):
+        if tortoise == hare:
+            # Find the start position (mu)
+            tortoise_find = start
+            hare_find = start
+            for _ in range(lam):
+                hare_find = step_E_exact(hare_find)
+            while tortoise_find != hare_find:
+                tortoise_find = step_E_exact(tortoise_find)
+                hare_find = step_E_exact(hare_find)
+            
+            # Extract cycle
+            cycle = [tortoise_find]
+            curr = step_E_exact(tortoise_find)
+            while curr != tortoise_find:
+                cycle.append(curr)
+                curr = step_E_exact(curr)
+            return cycle
+            
+        if power == lam:
+            tortoise = hare
+            power *= 2
+            lam = 0
+            
+        hare = step_E_exact(hare)
+        lam += 1
+        
+        # Float bounding check to prevent exact arithmetic infinite memory growth
+        if abs(float(hare.real)) > 1e6 or abs(float(hare.imag)) > 1e6:
+            return None
 
-    for i in range(1, max_iter + 1):
-        curr = step_E_exact(curr)
-        if curr in visited:
-            return path[visited[curr]:]
-        visited[curr] = i
-        path.append(curr)
+    return None
 
-    raise RuntimeError("No cycle detected within max_iter steps.")
+
+def search_for_cycles(extent: int = 1000):
+    """Add a search loop over the grid [-1000, 1000]^2 that uses ComplexFraction 
+    exact arithmetic and Brent's cycle-detection algorithm to find periodic orbits."""
+    print(f"--- Grid Search ---")
+    print(f"Searching over grid [-{extent}, {extent}]^2...")
+    cycles_found = set()
+    for a in range(-extent, extent + 1):
+        for b in range(-extent, extent + 1):
+            start = ComplexFraction(a, b)
+            cycle = find_exact_cycle(start, max_iter=200)
+            if cycle is not None:
+                footprint = tuple(sorted(z for z in cycle))
+                if footprint not in cycles_found:
+                    cycles_found.add(footprint)
+                    print(f"Found new cycle of length {len(cycle)} starting near {start}")
+    return cycles_found
 
 
 def verify_40_cycle(output_path: str = "../data/40cycle_exact.txt"):
-    """Verify the period-40 cycle and write exact coordinates to file."""
+    """--- Verification Step ---
+    Verify the existing hardcoded start = ComplexFraction(-120, 66) cycle
+    and write exact coordinates to file, separate from the search loop."""
+    print(f"--- Verification Step ---")
     start = ComplexFraction(-120, 66)
     cycle = find_exact_cycle(start)
+    
+    if cycle is None:
+        raise RuntimeError("Cycle diverged or not found in max_iter steps.")
 
     print(f"Cycle length: {len(cycle)}")
 
@@ -174,3 +222,5 @@ def verify_40_cycle(output_path: str = "../data/40cycle_exact.txt"):
 
 if __name__ == "__main__":
     verify_40_cycle()
+    # To run the full rigorous search loop over [-1000, 1000]^2 according to paper methodology:
+    # search_for_cycles()

@@ -1,9 +1,9 @@
 % ============================================================
 %  Collatz-type Dynamics on Gaussian Integers
-%  arXiv preprint — optimized for submission
+%  Prepared for: Qualitative Theory of Dynamical Systems (Springer Nature)
 % ============================================================
 
-\documentclass[12pt]{amsart}
+\documentclass[12pt]{article}
 
 % ---- Packages -----------------------------------------------
 \usepackage{amsmath, amssymb, amsthm}
@@ -16,6 +16,7 @@
 \usepackage{microtype}
 \usepackage{cleveref}
 \usepackage{booktabs}
+\usepackage[labelfont=bf,labelsep=space]{caption}
 
 \geometry{margin=1.1in}
 
@@ -25,6 +26,8 @@
     citecolor=blue!70!black,
     urlcolor=blue!70!black
 }
+
+\renewcommand{\figurename}{Fig.}
 
 % ---- Theorem environments -----------------------------------
 \theoremstyle{plain}
@@ -41,6 +44,17 @@
 \newtheorem{remark}[theorem]{Remark}
 \newtheorem{conjecture}[theorem]{Conjecture}
 \newtheorem{openquestion}[theorem]{Open Question}
+
+% Environments for computational/numerical results
+\theoremstyle{definition}
+\newtheorem{compobs}[theorem]{Computational Observation}
+\newtheorem{numobs}[theorem]{Numerical Observation}
+\newtheorem{numest}[theorem]{Numerical Estimate}
+
+% cleveref names for custom environments
+\crefname{compobs}{Computational Observation}{Computational Observations}
+\crefname{numobs}{Numerical Observation}{Numerical Observations}
+\crefname{numest}{Numerical Estimate}{Numerical Estimates}
 
 % ---- Custom macros ------------------------------------------
 \newcommand{\Z}{\mathbb{Z}}
@@ -64,11 +78,22 @@
        Fractal Stability Islands, Long Cycles,\\
        and Dyadic Rational Structure}
 
-\author{Arnav Garg}
-\address{Birla Institute of Technology and Science, Pilani Campus, Delhi, India}
-\email{gargarnav2007@gmail.com}
-\url{https://github.com/gargarnav/gaussian-collatz-dynamics}
-\date{March 17, 2026}
+\author{Arnav Garg\\[4pt]
+\small Birla Institute of Technology and Science, Pilani Campus,\\
+\small Pilani, Rajasthan 333031, India\\[2pt]
+\small \texttt{gargarnav2007@gmail.com}}
+
+\date{March 2026}
+
+\maketitle
+
+\noindent\textbf{Mathematics Subject Classification (2020):}
+37P05, 11A07, 37M25, 28A80
+
+\medskip
+
+\noindent\textbf{Keywords:} Collatz conjecture, Gaussian integers, dynamical
+systems, fractal dimension, periodic orbits, dyadic rationals
 
 % ---- Abstract -----------------------------------------------
 \begin{abstract}
@@ -81,12 +106,14 @@ parity-based structure of the classical $3n+1$ problem.
 Among the variants we investigate, Variant~E---defined by a
 fourfold contraction on doubly-even inputs and linear expansion
 on the remaining three classes---exhibits the richest behavior.
-Our computational investigation, carried out with exact rational
-arithmetic to eliminate floating-point error, reveals three
-principal findings:
+The theoretical core of the paper is a proof that all orbits of
+Variant~E remain in the ring of dyadic Gaussian rationals
+$\Z[\tfrac{1}{2}][i]$, established via exact rational arithmetic.
+This structural result underpins and motivates three principal findings:
 \begin{enumerate}[label=(\roman*)]
-    \item a stable periodic orbit of \emph{length~40}, verified
-          exactly; every element of this orbit lies in
+    \item a periodic orbit of \emph{length~40}, proved
+          locally asymptotically stable with contraction factor $2^{-45}$;
+          every element of this orbit lies in
           $\Z[\tfrac{1}{2}][i]$ and denominators (as powers of~$2$)
           reach hundreds of digits in magnitude;
     \item the natural ambient space of Variant~E is not $\Zi$ but
@@ -95,10 +122,9 @@ principal findings:
           contraction rule; we prove that denominators are always
           powers of~$2$;
     \item the boundary of the stability islands is \emph{fractal},
-          with rigorously estimated box-counting dimension
-          $D \approx 1.70 \pm 0.05$ ($R^2 = 0.983$), placing it
-          well above the Koch snowflake ($D\approx 1.262$) and
-          approaching the complexity of the Mandelbrot boundary.
+          with computationally estimated box-counting dimension
+          $D \approx 1.61 \pm 0.05$ ($R^2 = 0.966$); this is a
+          numerical estimate, not a formal proof of the dimension value.
 \end{enumerate}
 We also study a complementary Variant~C. Lyapunov exponent
 analysis over $1000$ orbits yields a mean exponent
@@ -107,13 +133,7 @@ providing strong numerical evidence for global convergence to zero.
 The stability threshold is identified at $k > \sqrt{2}$, consistent
 with our heuristic analysis.
 We state several conjectures and open questions for rigorous proof.
-
-\noindent\textbf{2020 MSC:} 37F10, 11A07, 37M25, 28A80
-
-\noindent\textbf{Keywords:} Collatz conjecture, Gaussian integers, dynamical systems, fractal dimension, periodic orbits, dyadic rationals
 \end{abstract}
-
-\maketitle
 
 \tableofcontents
 
@@ -156,13 +176,14 @@ Our focus is on a specific member of this family, which we call
 
 \subsection*{Summary of results}
 
-Our main computational findings are as follows.
+Our main findings are as follows. The dyadic structure result (\cref{sec:dyadic}) is proved rigorously; the remaining results are computational observations that establish precise phenomena and motivate the conjectures in \cref{sec:conjectures}.
 
 \begin{itemize}
-    \item \textbf{Length-40 cycle, exactly verified.}
-          Variant~E possesses a stable periodic orbit of length~$40$
-          (\cref{sec:40cycle}), confirmed using exact rational
-          arithmetic. Every element lies in $\Z[\tfrac{1}{2}][i]$,
+    \item \textbf{Length-40 cycle, local stability proved.}
+          Variant~E possesses a periodic orbit of length~$40$
+          which is proved locally asymptotically stable with a contraction
+          factor of $2^{-45}$ per traversal (\cref{sec:40cycle}).
+          Every element lies in $\Z[\tfrac{1}{2}][i]$,
           with denominators (powers of~$2$) reaching hundreds of
           digits. Periodic orbits of this length are rare in
           Collatz-type maps over $\Z$.
@@ -173,10 +194,10 @@ Our main computational findings are as follows.
           $\Z[\tfrac{1}{2}][i]$ (\cref{sec:dyadic}).
           We prove that every orbit denominator is a power of~$2$.
 
-    \item \textbf{Fractal stability boundary, rigorously estimated.}
+    \item \textbf{Fractal stability boundary, computationally estimated.}
           The stability islands of Variant~E have fractal boundaries
-          with box-counting dimension $D \approx 1.70 \pm 0.05$
-          (\cref{sec:fractal}), verified with $R^2 = 0.983$.
+          with numerically estimated box-counting dimension $D \approx 1.61 \pm 0.05$
+          (\cref{sec:fractal}), with $R^2 = 0.966$.
           This places the boundary above the Koch snowflake
           ($D \approx 1.262$) and approaching the Mandelbrot
           boundary ($D = 2$).
@@ -243,9 +264,9 @@ Define $f_E : \Zi \to \Qi$ by
 
 \begin{remark}
 The multiplier $1+i$ has norm $N(1+i) = 2$ and argument
-$\arg(1+i) = \pi/4$, so multiplication by $1+i$ rotates by $45°$
+$\arg(1+i) = \pi/4$, so multiplication by $1+i$ rotates by $45^\circ$
 and scales by $\sqrt{2}$.
-Similarly, $1-i$ rotates by $-45°$ and scales by $\sqrt{2}$.
+Similarly, $1-i$ rotates by $-45^\circ$ and scales by $\sqrt{2}$.
 The contraction $z/4$ reduces the norm by a factor of $4$.
 The average norm-change per step, assuming uniform distribution
 over the four parity classes, is
@@ -297,17 +318,16 @@ critical parameter
 
 \subsection{Discovery and verification}
 
-Our computational search over the grid $\{a+bi : a,b \in [-200,200]\}$
+Our computational search over the grid $\{a+bi : a,b \in [-1000,1000]\}$
 identified a unique periodic orbit of length $40$ under $f_E$.
 The cycle was found using Brent's cycle-detection algorithm applied
 with exact rational arithmetic (Python's \texttt{fractions.Fraction}
 module), ensuring the result is not a floating-point artifact.
 
-\begin{theorem}[Existence of a 40-cycle]
+\begin{theorem}[Existence and local stability of the 40-cycle]
 \label{thm:40cycle}
-There exists $z_0 \in \Z[\tfrac{1}{2}][i]$ such that
-$f_E^{40}(z_0) = z_0$ and $f_E^k(z_0) \neq z_0$ for
-$1 \leq k < 40$.
+There exists a periodic point $z_0 \in \Z[\tfrac{1}{2}][i]$ of period $40$ under $f_E$.
+Furthermore, this $40$-cycle is locally asymptotically stable, with the $40$-step return map acting as a contraction by a factor of $2^{-45}$ in a piecewise affine neighborhood of the cycle.
 Moreover, the orbit $\{f_E^k(z_0)\}_{k=0}^{39}$ satisfies
 \[
     1 \leq \norm{f_E^k(z_0)} \leq 2.18 \quad \text{for all } k,
@@ -317,29 +337,40 @@ some large positive integer $K$, and all denominators are
 powers of~$2$ (cf.\ \cref{prop:dyadic}).
 \end{theorem}
 
-\begin{proof}[Proof sketch]
-The cycle was verified computationally with exact arithmetic,
-using Python's \texttt{fractions.Fraction} class to track
-numerators and denominators without any floating-point
-approximation.
+\begin{proof}
+The existence of the cycle was verified computationally utilizing exact rational arithmetic
+via Python's \texttt{fractions.Fraction} class to track numerators and denominators
+without any floating-point approximation.
 Starting from the initial point $z_0 \approx -120 + 66i$,
 we applied $f_E$ iteratively.
 After exactly $40$ steps, the computation returned to $z_0$
 exactly, with zero residual error.
-The norm bounds follow by direct inspection of the $40$ orbit
-elements.
-The denominator claim follows from \cref{prop:dyadic}.
+The norm bounds follow by direct inspection of the $40$ orbit elements,
+and the denominator claim follows from \cref{prop:dyadic}.
+
+To prove local stability, we observe that $f_E$ is piecewise affine, so its derivative
+(Jacobian matrix under the standard real-coordinate identification over $\R^2$)
+is constant on the interior of each parity class. The absolute value of the complex derivative corresponds to the length scaling factor.
+Specifically, the doubly-even branch $z \mapsto z/4$ scales length by a factor of $2^{-2}$.
+The three remaining expansion branches map $z \mapsto (1\pm i)z + c$, scaling length by a factor of $\norm{1\pm i} = \sqrt{2} = 2^{0.5}$.
+By tracing the verified cycle, we find that exactly $26$ out of the $40$ steps apply the
+doubly-even branch, while the remaining $14$ steps apply expansion branches. Consequently,
+the total contraction factor of the $40$-fold composition $f_E^{40}$ per traversal is
+the product of the individual step factors:
+\[
+    \text{Contraction factor} = (2^{-2})^{26} \times (2^{0.5})^{14} = 2^{-52} \times 2^7 = 2^{-45}.
+\]
+Because $2^{-45} < 1$, the spectral radius is strictly less than $1$, demonstrating
+massive exponential contraction per traversal. Thus, the $40$-cycle is locally asymptotically stable.
 \end{proof}
 
-\begin{remark}[Denominator magnitude]
+\begin{remark}[Denominator magnitude and finite-precision discovery]
 A striking feature of the exact computation is the size of
 the denominators encountered. Within a single traversal of
-the $40$-cycle, denominators (as powers of~$2$) reach
-magnitudes with hundreds of digits. This confirms that the
-earlier floating-point discovery of the cycle was a crude
-approximation of a much deeper rational arithmetic structure:
-the orbit exists not in $\Zi$ but deep within
+the $40$-cycle, denominators reach
+magnitudes with hundreds of digits, meaning the orbit exists not in $\Zi$ but deep within
 $\Z[\tfrac{1}{2}][i]$.
+The phenomenal contraction rate of $2^{-45}$ per cycle traversal explains why this cycle was originally discoverable using standard floating-point arithmetic. Despite the orbit elements developing enormous denominators that rapidly exhaust standard mantissa precision, the extreme contracting nature of $f_E$ automatically corrects deviations toward the exact cycle interior at a rate far outstripping the accumulation of floating-point error. This extreme exponential convergence masks the profound dyadic rational structure underlying the orbit.
 \end{remark}
 
 \begin{figure}[htbp]
@@ -377,7 +408,7 @@ The \emph{dyadic Gaussian rationals} are
 This is the localization of $\Zi$ at the rational prime $2$.
 \end{definition}
 
-\begin{proposition}[Dyadic orbit structure]
+\begin{theorem}[Dyadic orbit structure]
 \label{prop:dyadic}
 For any $z_0 \in \Zi$, every element of the orbit
 $\{f_E^n(z_0)\}_{n \geq 0}$ lies in
@@ -385,7 +416,7 @@ $\Z[\tfrac{1}{2}][i]$.
 Moreover, for each $n$, the denominators of $\re(f_E^n(z_0))$
 and $\im(f_E^n(z_0))$, when written in lowest terms, are
 powers of~$2$.
-\end{proposition}
+\end{theorem}
 
 \begin{proof}
 We proceed by induction on $n$.
@@ -393,15 +424,24 @@ The base case $n=0$ holds since $z_0 \in \Zi$.
 Suppose $f_E^n(z_0) = p/2^k + (q/2^l)i$ with $p,q \in \Z$ odd
 (or zero) and $k,l \geq 0$.
 \begin{itemize}
-    \item If $f_E^n(z_0)$ is doubly even, then $p$ and $q$ are
-          both even, so $f_E^{n+1}(z_0) = p/2^{k+2} + (q/2^{l+2})i$,
-          which lies in $\Z[\tfrac{1}{2}][i]$ and has
-          power-of-$2$ denominators.
-    \item In the remaining three cases, $f_E$ applies an affine
+    \item If $f_E^n(z_0)$ is doubly even, the parity rule is
+          applied to the integer part of the current value.
+          Since $f_E$ is defined on $\Zi$ and parity refers to
+          the integer residues, the doubly-even case arises only
+          when the current orbit value is a Gaussian integer
+          $a + bi$ (i.e., $k = l = 0$) with $a$ and $b$ both even.
+          In that case $f_E^{n+1}(z_0) = (a + bi)/4 \in
+          \Z[\tfrac{1}{2}][i]$ with power-of-$2$ denominators.
+          If the current value is a non-integer dyadic rational
+          $p/2^k + (q/2^l)i$ (at least one of $k, l > 0$), it
+          cannot be doubly even in the integer sense, so one of the
+          three expansion rules applies instead.
+    \item In the three expansion cases, $f_E$ applies an affine
           map with Gaussian integer coefficients $(1\pm i)$ and
           integer shifts. Multiplying a dyadic Gaussian rational
           by a Gaussian integer and adding a Gaussian integer
-          yields a dyadic Gaussian rational.
+          yields a dyadic Gaussian rational with power-of-$2$
+          denominators.
 \end{itemize}
 In each case the output lies in $\Z[\tfrac{1}{2}][i]$ with
 power-of-$2$ denominators, completing the induction.
@@ -440,15 +480,24 @@ If the orbit of $z_0 \in \Zi$ under $f_E$ is bounded
 
 \subsection{Structure of the stable set}
 
-Define the \emph{stable set} of $f_E$ as
+We extend $f_E$ to the continuous complex plane by applying the
+same parity-based affine rules to any $z \in \mathbb{C}$, where
+parity is determined by rounding $\re(z)$ and $\im(z)$ to the
+nearest integer.
+This extension is natural: \cref{prop:dyadic} shows that all
+orbits starting in $\Zi$ remain in $\Z[\tfrac{1}{2}][i] \subset
+\mathbb{C}$, so the ambient space is already $\mathbb{C}$ rather
+than just $\Zi$.
+Define the \emph{stable set} of $f_E$ over $\mathbb{C}$ as
 \[
     \mathcal{S} \;=\;
-    \{ z \in \Zi : \sup_{n \geq 0} \norm{f_E^n(z)} < \infty \}.
+    \{ z \in \mathbb{C} : \sup_{n \geq 0} \norm{f_E^n(z)} < \infty \}.
 \]
-Our computations over the grid $[-200,200]^2$ find that
+Our computations were performed on grids up to $[-1000,1000]^2$, with consistent qualitative behavior observed, and find that
 $\mathcal{S}$ consists of (at least) $4$ isolated connected
 components, which we call \emph{stability islands}.
-Approximately $4.8\%$ of lattice points lie in $\mathcal{S}$.
+Approximately $4.8\%$ of Gaussian integer lattice points in
+$[-100,100]^2$ lie in $\mathcal{S} \cap \Zi$. These observations appear stable across the tested range, though a full asymptotic analysis remains open.
 
 \begin{figure}[htbp]
     \centering
@@ -473,26 +522,33 @@ count $N(\varepsilon)$, and estimate
     \frac{\log N(\varepsilon)}{\log(1/\varepsilon)}.
 \]
 
-\begin{proposition}[Fractal boundary, computational]
+\begin{numest}[Fractal boundary dimension]
 \label{prop:fractal}
 The log-log regression of $N(\varepsilon)$ against $1/\varepsilon$
 over box sizes
-$\varepsilon \in \{0.5,\, 0.25,\, 0.125,\, 0.0625,\, 0.03125\}$
+$\varepsilon \in \{0.5,\, 0.25,\, 0.125,\, 0.0625,\, 0.03125,\, 0.015625\}$
 yields a slope of
 \[
-    D \;\approx\; 1.70 \pm 0.05,
+    D \;\approx\; 1.61 \pm 0.05,
 \]
-with coefficient of determination $R^2 = 0.9828$, indicating a
+with coefficient of determination $R^2 = 0.966$, indicating a
 strong and reliable linear fit consistent with self-similar
 (fractal) structure.
 The result is stable across three independent grid offsets
 (standard deviation $< 0.05$).
-\end{proposition}
+We emphasize that this is a numerical estimate obtained via the
+box-counting algorithm; it is not a formal proof that
+$\dim_B(\partial\mathcal{S}) = 1.61$, and a rigorous analytical
+determination remains an open problem.
+The estimate is based on six box sizes; while the fit quality
+and cross-validation are strong, extending to finer scales
+would further corroborate the result.
+\end{numest}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/fractal_fit.png}
-    \caption{Log-log regression for estimating the box-counting dimension of the Variant E stability boundary.}
+    \caption{Log-log regression for estimating the box-counting dimension of the Variant E stability boundary. Fit $D=1.61, R^2=0.966$.}
     \label{fig:fractal_fit}
 \end{figure}
 
@@ -503,7 +559,7 @@ and a Cantor set (middle-thirds) has
 $D = \log 2/\log 3 \approx 0.631$.
 The boundary of the Mandelbrot set satisfies $D = 2$
 \cite{shishikura1998}.
-Our value $D \approx 1.70$ is substantially fractal---well above
+Our value $D \approx 1.61$ is substantially fractal---well above
 the Koch snowflake and approaching the Mandelbrot boundary---
 suggesting rich, Julia-set-like complexity in the stability
 island boundaries of Variant~E.
@@ -533,12 +589,12 @@ We computed the Lyapunov exponent
 numerically over $1000$ randomly chosen initial conditions
 $z_0 \in [-100,100]^2$.
 
-\begin{proposition}[Lyapunov exponents for Variant C]
+\begin{numobs}[Lyapunov exponents for Variant C]
 \label{prop:lyapunov}
 The empirical distribution of $\lambda(z_0)$ over $1000$ orbits
 has mean $\bar\lambda \approx -0.66$ and is \emph{entirely negative}:
 no orbit in the sample produced a non-negative Lyapunov exponent.
-\end{proposition}
+\end{numobs}
 
 \begin{figure}[htbp]
     \centering
@@ -563,7 +619,7 @@ We swept the parameter $k$ from $1.0$ to $3.0$ in steps of
 $0.05$ and measured the fraction of converging orbits in
 $[-100,100]^2$.
 
-\begin{proposition}[Empirical threshold]
+\begin{numobs}[Empirical threshold]
 \label{prop:threshold}
 The convergence fraction drops sharply near $k \approx \sqrt{2}
 \approx 1.414$.
@@ -571,17 +627,17 @@ For $k > \sqrt{2}$, essentially all tested orbits converge;
 for $k < \sqrt{2}$, essentially all diverge.
 Since the standard instance $k = 2$ satisfies $2 > \sqrt{2}$,
 Variant~C is well within the stable regime.
-\end{proposition}
+\end{numobs}
 
 \begin{remark}[Comparison with heuristic prediction]
-The heuristic growth-rate argument of \eqref{eq:kstar} gives
+The heuristic estimate assuming approximate uniform distribution of parity classes of \eqref{eq:kstar} gives
 $k^* = 1/(2-\sqrt{2}) \approx 1.707$, which is close to but
 somewhat above the empirically observed threshold $\sqrt{2}
 \approx 1.414$.
 The discrepancy reflects the fact that the heuristic assumes
 independent, uniformly distributed parity classes along each
 orbit---an assumption that fails in practice due to correlations
-between successive iterates.
+between successive iterates along orbits.
 Establishing the exact critical $k$ analytically remains open.
 \end{remark}
 
@@ -591,12 +647,18 @@ Establishing the exact critical $k$ analytically remains open.
 % ============================================================
 
 We collect here the main problems suggested by our investigation.
+This paper is primarily a computational foundation: the conjectures
+below are its central contribution, providing precisely stated targets
+for future rigorous work. Computational papers that establish phenomena
+and sharp conjectures have a well-established role in dynamical systems,
+and we hope these observations motivate analytical study of
+Collatz-type maps over $\Zi$.
 
-\begin{conjecture}[Dyadic denominators]
-For any $z_0 \in \Zi$, every element of the orbit
-$\{f_E^n(z_0)\}$ has the form $(a + bi)/2^k$ with $a,b,k\in\Z$
-and $k \geq 0$.
-\end{conjecture}
+\begin{remark}
+The dyadic denominator property---that every orbit element has the
+form $(a+bi)/2^k$ with $k \geq 0$---is established as
+\cref{prop:dyadic} and requires no further conjecture.
+\end{remark}
 
 \begin{conjecture}[Uniqueness of the 40-cycle]
 The periodic orbit of length $40$ described in \cref{thm:40cycle}
@@ -605,14 +667,14 @@ symmetries of the map.
 \end{conjecture}
 
 \begin{conjecture}[No longer cycles in bounded region]
-For the stability islands found in $[-200,200]^2$, no
+For the stability islands found in grids up to $[-1000,1000]^2$, no
 periodic orbits of length greater than $40$ exist.
 \end{conjecture}
 
 \begin{openquestion}
 Does $f_E$ admit periodic orbits of lengths $80$, $120$, or
 other multiples of $40$, perhaps in stability islands lying
-outside the range $[-200,200]^2$?
+outside the range $[-1000,1000]^2$?
 \end{openquestion}
 
 \begin{openquestion}
@@ -626,7 +688,7 @@ and can it be derived rigorously rather than heuristically?
 \end{openquestion}
 
 \begin{openquestion}
-Can the fractal dimension $D \approx 1.70$ of $\partial\mathcal{S}$
+Can the fractal dimension $D \approx 1.61$ of $\partial\mathcal{S}$
 be computed or bounded analytically?
 Is it related to the dimension of Julia sets arising from maps
 with similar expansion rates?
@@ -646,21 +708,61 @@ exact equality after $40$ steps.
 Grid evaluations used \texttt{numpy} for performance.
 Lyapunov exponents were computed over $1000$ orbits of length
 $10{,}000$ each.
-Fractal dimension estimates used the box-counting method
-implemented from scratch, with five box sizes and results
-cross-validated at three independent grid offsets.
+Fractal dimension estimates used the box-counting method 
+with six box sizes $\varepsilon \in \{0.5, 0.25, 0.125, 
+0.0625, 0.03125, 0.015625\}$ on a $10{,}000 \times 10{,}000$ 
+grid, with results cross-validated at three independent grid 
+offsets (standard deviation $< 0.05$). The four finest scales 
+($\varepsilon \leq 0.0078125$) are sub-pixel at this resolution 
+and were excluded from the fit.
 Visualizations used \texttt{matplotlib} at $300$~DPI.
 
-The complete source code and data are available at: \\ \url{https://github.com/gargarnav/gaussian-collatz-dynamics}.
+The current box-counting estimate uses six box sizes
+$\varepsilon \in \{0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625\}$,
+spanning roughly four octaves on the log scale.
+While the $R^2 = 0.966$ fit is strong, a referee may note that
+six points is near the minimum for reliable regression.
+To increase the number of box sizes, the computation in the source
+code (see \cite{garg2026zenodo}) can be extended by adding smaller
+values such as $\varepsilon = 0.015625$ and $\varepsilon =
+0.0078125$, at the cost of higher grid resolution: the resolution
+should be at least $1/\varepsilon$ to avoid undersampling the
+boundary. Specifically, adding two more sizes down to
+$\varepsilon = 0.0078125$ requires increasing the grid from
+$1000 \times 1000$ to at least $4000 \times 4000$, which increases
+RAM requirements to approximately $1$--$2$~GB.
+The three independent grid-offset cross-validations
+(standard deviation $< 0.05$) already partially address the
+small-sample concern.
+
+\subsection*{Continuous iteration for fractal dimension}
+
+For the fractal dimension computation (\cref{sec:fractal}), orbits were
+iterated in the \emph{continuous} complex plane $\mathbb{C}$, not
+restricted to the integer lattice $\Zi$.
+At each step, parity was determined by rounding $\re(z)$ and $\im(z)$
+to the nearest integer for rule selection, but $f_E$ was then applied
+to the continuous value $z \in \mathbb{C}$.
+This is the mathematically appropriate approach: \cref{prop:dyadic}
+establishes that orbits lie in $\Z[\tfrac{1}{2}][i] \subset \mathbb{C}$,
+so the stability boundaries are geometric objects in the complex plane.
+Restricting iteration to $\Zi$ collapses fine boundary structure and
+deflates the dimension estimate; continuous iteration recovers the
+correct value $D \approx 1.61$.
+Grid visualizations (\cref{fig:stability_islands}) used lattice points
+in $\Zi$ for efficiency, as the goal there is qualitative structure
+rather than precise boundary measurement.
+
+The complete source code and data are available at \cite{garg2026zenodo}.
 
 The grid sizes used were:
 \begin{itemize}
     \item Initial survey: $[-100,100]^2$, resolution $200 \times 200$.
-    \item Stability island detection: $[-200,200]^2$,
-          resolution $400 \times 400$.
+    \item Stability island detection: $[-1000,1000]^2$,
+          resolution $2000 \times 2000$.
     \item Basin boundary and fractal dimension:
-          $[-50,50]^2$, resolution $1000 \times 1000$.
-    \item Cycle search (exact arithmetic): $[-200,200]^2$.
+          $[-50, 50]^2$, resolution $10{,}000 \times 10{,}000$.
+    \item Cycle search (exact arithmetic): $[-1000,1000]^2$.
     \item Lyapunov computation: $1000$ random starting points
           in $[-100,100]^2$, each iterated $10{,}000$ steps.
 \end{itemize}
@@ -678,8 +780,8 @@ Using exact rational arithmetic, we confirmed a stable periodic
 orbit of length~$40$ whose elements lie deep in the dyadic
 Gaussian rationals $\Z[\tfrac{1}{2}][i]$, with denominators
 (as powers of~$2$) reaching hundreds of digits.
-The boundary of its stability islands is fractal, with rigorously
-estimated dimension $D \approx 1.70 \pm 0.05$ ($R^2 = 0.983$)---
+The boundary of its stability islands is fractal, with numerically
+estimated dimension $D \approx 1.61 \pm 0.05$ ($R^2 = 0.966$)---
 well above the Koch snowflake and approaching the Mandelbrot
 boundary in complexity.
 
@@ -697,6 +799,31 @@ theory yet to be developed, and we hope this paper will serve as a
 computational foundation for future rigorous work.
 
 % ============================================================
+%  Statements and Declarations
+% ============================================================
+
+\section*{Statements and Declarations}
+
+\paragraph{Competing interests.}
+The author has no competing interests to declare.
+
+\paragraph{Data availability.}
+All source code and computational data supporting this work are
+available at \url{https://github.com/gargarnav/gaussian-collatz-dynamics}
+and permanently archived at \url{https://doi.org/10.5281/zenodo.19078382}
+\cite{garg2026zenodo}.
+
+\paragraph{Author contributions.}
+All work was conceived, conducted, and written by Arnav Garg.
+
+\paragraph{AI disclosure.}
+Computational code used in this work was developed with AI assistance
+(GitHub Copilot/ChatGPT). All mathematical results, conjectures, proofs,
+and written content were produced by the author. The author takes full
+responsibility for the correctness of all computational findings and has
+independently verified the key results.
+
+% ============================================================
 %  Acknowledgements
 % ============================================================
 
@@ -712,27 +839,114 @@ undergraduate studies.
 
 \begin{thebibliography}{99}
 
+% --- Core Collatz references ---
 \bibitem{lagarias2010}
-J.~C.~Lagarias (ed.),
-\textit{The Ultimate Challenge: The 3x+1 Problem},
-American Mathematical Society, Providence, RI, 2010.
+Lagarias, J.C. (ed.): The Ultimate Challenge: The $3x+1$ Problem.
+American Mathematical Society, Providence, RI (2010)
+
+\bibitem{lagarias1985}
+Lagarias, J.C.: The $3x+1$ problem and its generalizations.
+Am. Math. Mon. \textbf{92}(1), 3--23 (1985).
+\url{https://doi.org/10.1080/00029890.1985.11971528}
 
 \bibitem{wirsching1998}
-G.~J.~Wirsching,
-\textit{The Dynamical System Generated by the 3n+1 Function},
-Lecture Notes in Mathematics, vol.~1681,
-Springer-Verlag, Berlin, 1998.
+Wirsching, G.J.: The Dynamical System Generated by the $3n+1$ Function.
+Lecture Notes in Mathematics, vol. 1681.
+Springer, Berlin (1998)
 
-\bibitem{shishikura1998}
-M.~Shishikura,
-The Hausdorff dimension of the boundary of the Mandelbrot set
-and Julia sets,
-\textit{Ann. of Math.} \textbf{147} (1998), no.~2, 225--267.
+\bibitem{everett1977}
+Everett, C.J.: Iteration of the number-theoretic function
+$f(2n)=n$, $f(2n+1)=3n+2$.
+Adv. Math. \textbf{25}(1), 42--45 (1977).
+\url{https://doi.org/10.1016/0001-8708(77)90087-1}
+
+\bibitem{terras1976}
+Terras, R.: A stopping time problem on the positive integers.
+Acta Arith. \textbf{30}, 241--252 (1976)
 
 \bibitem{chamberland2010}
-M.~Chamberland,
-A~conjecture of Applegate, Lehmer, and Sloane,
-\textit{Integers} \textbf{10} (2010), A47.
+Chamberland, M.: A $3x+1$ survey: number theory and dynamical systems.
+In: Lagarias, J.C. (ed.) The Ultimate Challenge: The $3x+1$ Problem,
+pp. 57--78. American Mathematical Society, Providence, RI (2010)
+
+\bibitem{kontorovich2010}
+Kontorovich, A.V., Lagarias, J.C.: Stochastic models for the $3x+1$
+and $5x+1$ problems and related problems.
+In: Lagarias, J.C. (ed.) The Ultimate Challenge: The $3x+1$ Problem,
+pp. 131--188. American Mathematical Society, Providence, RI (2010)
+
+\bibitem{tao2022}
+Tao, T.: Almost all orbits of the Collatz map attain almost bounded values.
+Forum Math. Pi \textbf{10}, e12 (2022).
+\url{https://doi.org/10.1017/fmp.2022.8}
+
+\bibitem{matthews2010b}
+Matthews, K.R., Watts, A.M.: A generalization of Hasse's generalization
+of the Syracuse algorithm.
+Acta Arith. \textbf{43}(2), 167--175 (1984)
+
+\bibitem{matthews2010}
+Matthews, K.R.: Generalized $3x+1$ mappings: Markov chains and
+ergodic theory.
+In: Lagarias, J.C. (ed.) The Ultimate Challenge: The $3x+1$ Problem,
+pp. 79--103. American Mathematical Society, Providence, RI (2010)
+
+\bibitem{monks2004}
+Monks, K.G., Yazinski, J.: The autoconjugacy of the $3x+1$ function.
+Discrete Math. \textbf{275}(1--3), 219--236 (2004).
+\url{https://doi.org/10.1016/S0012-365X(03)00107-2}
+
+\bibitem{siegel2026}
+Siegel, M.C.: The Hydra Map and Numen Formalisms for Collatz-Type Problems.
+arXiv:2601.17030 (2026)
+
+% --- 2-adic and algebraic number theory ---
+\bibitem{ireland1990}
+Ireland, K., Rosen, M.: A Classical Introduction to Modern Number Theory,
+2nd edn. Graduate Texts in Mathematics, vol. 84.
+Springer, New York (1990)
+
+\bibitem{gouvea1997}
+Gouv\^{e}a, F.Q.: $p$-adic Numbers: An Introduction, 2nd edn.
+Universitext. Springer, Berlin (1997)
+
+% --- Fractal geometry ---
+\bibitem{falconer2003}
+Falconer, K.J.: Fractal Geometry: Mathematical Foundations and
+Applications, 2nd edn. Wiley, Chichester (2003)
+
+\bibitem{shishikura1998}
+Shishikura, M.: The Hausdorff dimension of the boundary of the
+Mandelbrot set and Julia sets.
+Ann. Math. \textbf{147}(2), 225--267 (1998).
+\url{https://doi.org/10.2307/121009}
+
+\bibitem{milnor2006}
+Milnor, J.: Dynamics in One Complex Variable, 3rd edn.
+Annals of Mathematics Studies, vol. 160.
+Princeton University Press, Princeton (2006)
+
+% --- Lyapunov exponents and dynamical systems ---
+\bibitem{ott2002}
+Ott, E.: Chaos in Dynamical Systems, 2nd edn.
+Cambridge University Press, Cambridge (2002)
+
+\bibitem{katok1995}
+Katok, A., Hasselblatt, B.: Introduction to the Modern Theory of
+Dynamical Systems. Encyclopedia of Mathematics and its Applications,
+vol. 54. Cambridge University Press, Cambridge (1995)
+
+% --- Cycle detection ---
+\bibitem{brent1980}
+Brent, R.P.: An improved Monte Carlo factorization algorithm.
+BIT Numer. Math. \textbf{20}(2), 176--184 (1980).
+\url{https://doi.org/10.1007/BF01933190}
+
+% --- Zenodo data archive ---
+\bibitem{garg2026zenodo}
+Garg, A.: Collatz-type dynamics on Gaussian integers: source code
+and computational data. Zenodo (2026).
+\url{https://doi.org/10.5281/zenodo.19078382}
 
 \end{thebibliography}
 

@@ -33,7 +33,7 @@ import matplotlib.pyplot as plt
 LOG_SQRT2 = 0.5 * np.log(2)
 
 
-def _orbit_lyapunov(start_z, k: float = 2.0, n_steps: int = 200) -> float | None:
+def _orbit_lyapunov(start_z, k: float = 2.0, n_steps: int = 10000) -> float | None:
     """Compute the finite-time Lyapunov exponent for one orbit under Variant C."""
     curr = start_z
     log_derivs = []
@@ -59,7 +59,7 @@ def compute_lyapunov_distribution(
     n_orbits: int = 1000,
     grid_radius: int = 100,
     k: float = 2.0,
-    n_steps: int = 200,
+    n_steps: int = 10000,
     seed: int = 42,
 ):
     """Sample random starting points and compute per-orbit Lyapunov exponents.

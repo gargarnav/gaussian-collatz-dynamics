@@ -40,5 +40,9 @@ ENV/
 *.bbl
 
 # Data (Optional - common to ignore large datasets)
-# data/*.csv
-# data/*.txt
+data/*.csv
+data/*.txt
+data_new/
+*.npy
+*.zip
+paper/Dynamical_Structures/
